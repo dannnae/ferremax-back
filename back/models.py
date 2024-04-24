@@ -2,30 +2,44 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 class CustomUser(AbstractUser):
-    ROL_CHOICES = (
-        ('ADMIN', 'Administrador'),
-        ('VENDEDOR', 'Vendedor'),
-        ('BODEGUERO', 'Bodeguero'),
-        ('CONTADOR', 'Contador'),
-        ('CLIENTE', 'Cliente'),
+    class Types(models.TextChoices):
+        ADMIN = "ADMIN", "Admin"
+        VENDEDOR = "VENDEDOR", "Vendedor"
+        BODEGUERO = "BODEGUERO", "Bodeguero"
+        CONTADOR = "CONTADOR", "Contador"
+        CLIENTE = "CLIENTE", "Cliente"
+
+    type = models.CharField(
+        max_length=20, choices=Types.choices, default=Types.ADMIN
     )
-    rol = models.CharField(max_length=10, choices=ROL_CHOICES)
+
+    email = models.EmailField(unique=True, max_length=50)
+    username = models.CharField(unique=True, max_length=20)
+
+    note = models.TextField(max_length=200, null=True, blank=True)
+
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = ["username"]
 
     def __str__(self):
-        return self.username
+        return self.email
+    
 
 class Categoria(models.Model):
     nombre = models.CharField(max_length=100)
-
+    
     def __str__(self):
         return self.nombre
+    
 
+# Para el retiro en tienda
 class Tienda(models.Model):
     nombre = models.CharField(max_length=100)
     direccion = models.CharField(max_length=200)
 
     def __str__(self):
         return self.nombre
+    
 
 class Producto(models.Model):
     codigo = models.CharField(max_length=20, unique=True)
@@ -33,17 +47,22 @@ class Producto(models.Model):
     nombre = models.CharField(max_length=200)
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE)
     tienda = models.ForeignKey(Tienda, on_delete=models.CASCADE)
+    valor = models.FloatField()
 
     def __str__(self):
         return self.nombre
+    
 
-class Precio(models.Model):
-    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
-    fecha = models.DateTimeField()
-    valor = models.DecimalField(max_digits=10, decimal_places=2)
+class Boleta(models.Model):
+    fecha = models.DateTimeField(auto_now_add=True)
+    valor_total = models.FloatField()
+    usuario = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    direccion_entrega = models.CharField(max_length=200)
+    tienda_entrega = models.ForeignKey(Tienda, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"Precio de {self.producto} el {self.fecha}: ${self.valor}"
+        return self.id
+    
 
 class Contacto(models.Model):
     nombre = models.CharField(max_length=100)
@@ -52,14 +71,13 @@ class Contacto(models.Model):
 
     def __str__(self):
         return self.nombre
+    
 
 class Pedido(models.Model):
+    boleta = models.ForeignKey(Boleta, on_delete=models.CASCADE, null=True, default=None)
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
     cantidad = models.PositiveIntegerField()
-    fecha = models.DateTimeField(auto_now_add=True)
-    usuario = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    direccion_entrega = models.CharField(max_length=200)
-    tienda_entrega = models.ForeignKey(Tienda, on_delete=models.CASCADE)
+    valor_total = models.FloatField()
 
     def __str__(self):
-        return f"Pedido de {self.producto} el {self.fecha}"
+        return self.boleta
