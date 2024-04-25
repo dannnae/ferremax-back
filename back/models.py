@@ -45,6 +45,7 @@ class Producto(models.Model):
     codigo = models.CharField(max_length=20, unique=True)
     marca = models.CharField(max_length=100)
     nombre = models.CharField(max_length=200)
+    stock = models.IntegerField(default=0)
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE)
     tienda = models.ForeignKey(Tienda, on_delete=models.CASCADE)
     valor = models.FloatField()
