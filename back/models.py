@@ -79,6 +79,7 @@ class Pedido(models.Model):
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
     cantidad = models.PositiveIntegerField()
     valor_total = models.FloatField()
+    en_carrito = models.BooleanField(default=True)
 
     def __str__(self):
         return self.boleta
