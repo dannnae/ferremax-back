@@ -3,6 +3,7 @@ from .tienda import TiendaViewSet
 from .boleta import BoletaViewSet
 from .categoria import CategoriaViewSet
 from .pedido import PedidoViewSet
+from .usuario import UserViewSet
 
 
 __all__ = [
@@ -10,5 +11,6 @@ __all__ = [
     'TiendaViewSet',
     'BoletaViewSet',
     'CategoriaViewSet',
-    'PedidoViewSet'
+    'PedidoViewSet',
+    'UserViewSet'
 ]
