@@ -40,11 +40,13 @@ INSTALLED_APPS = [
     'back',
     'rest_framework',
     'rest_framework_simplejwt',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -77,6 +79,12 @@ REST_FRAMEWORK = {
 }
 
 AUTH_USER_MODEL = "back.CustomUser"
+
+CORS_ALLOW_ALL_ORIGINS = True
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:4200"
+]
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
