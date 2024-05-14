@@ -61,6 +61,7 @@ class Boleta(models.Model):
     usuario = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     direccion_entrega = models.CharField(max_length=200)
     tienda_entrega = models.ForeignKey(Tienda, on_delete=models.CASCADE)
+    pagado = models.BooleanField(default=False)
 
     def __str__(self):
         return self.id
