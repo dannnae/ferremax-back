@@ -1,5 +1,6 @@
 from transbank.webpay.webpay_plus.transaction import Transaction
 import uuid
+import requests
 
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.serializers import ModelSerializer
@@ -31,8 +32,12 @@ class BoletaViewSet(ModelViewSet):
             amount=response.data['valor_total'], 
             return_url='http://localhost:8000/api/boleta/commit/'
         )
+        response = requests.post(transaccion['url'], { 'token_ws': transaccion['token'] })
+        if response.status_code == 200:
+            html = response.text
+            return Response(html, content_type='text/html')
 
-        return Response(transaccion)
+        return Response(404)
     
     @action(detail=False, methods=['POST'])
     def commit(self, request):
