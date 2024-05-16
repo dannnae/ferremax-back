@@ -145,6 +145,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # Conversion de divisas
+# Agregar crontab
 
 SIETE_USERNAME = config('SIETE_USERNAME')
 SIETE_PASSWORD = config('SIETE_PASSWORD')
@@ -155,11 +156,15 @@ USD_CONVERSION_DATAFRAME = SIETE.cuadro(series=[USD_SERIE])[USD_SERIE]
 
 USD_TODAY = USD_CONVERSION_DATAFRAME[-1]
 
+# Configuracion webpay
+
 WEBPAY_PLUS_CONFIG = {
     'MERCHANT_ID': '597055555532',
     'PRIVATE_KEY': '579B532A7440BB0C9079DED94D31EA1615BACEB56610332264630D42D0A36B1C',
     'ENVIRONMENT': 'INTEGRACION' 
 }
+
+# Configuracion autenticacion
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
