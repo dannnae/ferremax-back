@@ -21,3 +21,6 @@ Back de proyecto Ferremas
 ## Para ejecutar el proyecto
 1. Correr server con el comando:
    `python manage.py runserver`
+
+## Documentación API
+- URL: `http://127.0.0.1:8000/swagger`
