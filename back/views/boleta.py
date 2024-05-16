@@ -25,9 +25,14 @@ class BoletaViewSet(ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         response = super().create(request, *args, **kwargs)
+        
+        buy_order = self.generate_buy_order()
+        boleta = Boleta.objects.get(id=response.data['id'])
+        boleta.buy_order = buy_order
+        boleta.save()
 
         transaccion = (Transaction()).create(
-            buy_order=self.generate_buy_order(), 
+            buy_order=buy_order, 
             session_id=self.generate_buy_order(), 
             amount=response.data['valor_total'], 
             return_url='http://localhost:8000/api/boleta/commit/'
@@ -39,9 +44,12 @@ class BoletaViewSet(ModelViewSet):
 
         return Response(404)
     
-    @action(detail=False, methods=['POST'])
+    @action(detail=False, methods=['GET'])
     def commit(self, request):
-        token = request.data.get('token_ws')
+        token = request.query_params.get('token_ws')
         resultado = (Transaction()).commit(token=token)
+        boleta = Boleta.objects.get(buy_order=resultado['buy_order'])
+        boleta.pagado = True if resultado['status'] == 'AUTHORIZED' else False
+        boleta.save()
 
         return redirect('http://localhost:4200/pago_confirmado/')
