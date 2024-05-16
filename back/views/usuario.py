@@ -2,7 +2,7 @@ from django.contrib.auth.hashers import make_password
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.serializers import ModelSerializer, CharField
 from back.models import CustomUser
-
+from drf_yasg.utils import swagger_auto_schema
 
 class UserSerializer(ModelSerializer):
     password = CharField(write_only=True)
@@ -21,3 +21,12 @@ class UserSerializer(ModelSerializer):
 class UserViewSet(ModelViewSet):
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
+
+
+    @swagger_auto_schema(
+        operation_description="Crear nuevo usuario",
+        request_body=UserSerializer,
+        responses={201: UserSerializer()}
+    )
+    def create(self, request, *args, **kwargs):
+        return super().create(request, *args, **kwargs)
