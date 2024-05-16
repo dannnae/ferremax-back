@@ -56,6 +56,7 @@ class Producto(models.Model):
     
 
 class Boleta(models.Model):
+    buy_order = models.CharField(max_length=10, unique=True, null=True, default=None)
     fecha = models.DateTimeField(auto_now_add=True)
     valor_total = models.FloatField()
     usuario = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
