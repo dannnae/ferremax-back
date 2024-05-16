@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+import bcchapi
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -41,6 +43,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'corsheaders',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
@@ -138,3 +141,21 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# Conversion de divisas
+
+SIETE_USERNAME = config('SIETE_USERNAME')
+SIETE_PASSWORD = config('SIETE_PASSWORD')
+SIETE = bcchapi.Siete(SIETE_USERNAME, SIETE_PASSWORD)
+USD_SERIE = 'F073.TCO.PRE.Z.D'
+
+USD_CONVERSION_DATAFRAME = SIETE.cuadro(series=[USD_SERIE])[USD_SERIE]
+
+USD_TODAY = USD_CONVERSION_DATAFRAME[-1]
+
+WEBPAY_PLUS_CONFIG = {
+    'MERCHANT_ID': '597055555532',
+    'PRIVATE_KEY': '579B532A7440BB0C9079DED94D31EA1615BACEB56610332264630D42D0A36B1C',
+    'ENVIRONMENT': 'INTEGRACION' 
+}
