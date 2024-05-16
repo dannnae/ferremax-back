@@ -13,3 +13,4 @@ pandas==2.2.2
 numpy==1.26.4
 six==1.16.0
 python-dateutil==2.9.0
+drf-yasg==1.21.7
