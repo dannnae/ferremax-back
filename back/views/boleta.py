@@ -15,7 +15,7 @@ from back.models import Boleta
 class BoletaSerializer(ModelSerializer):
     class Meta:
         model = Boleta
-        fields = ['__all__']
+        fields = '__all__'
 
 
 class BoletaViewSet(ModelViewSet):
