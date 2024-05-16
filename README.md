@@ -14,8 +14,9 @@ Back de proyecto Ferremas
 2. Activar scripts `env/Scripts/activate`
 3. Instalar dependencias con el comando `pip install -r requirements.txt`
 4. Crear archivo `my.cnf`
-5. Crear migraciones `python manage.py makemigrations`
-6. Correr migracions `python manage.py migration`
+5. Crear archivo `.env`
+6. Crear migraciones `python manage.py makemigrations`
+7. Correr migracions `python manage.py migration`
 
 ## Para ejecutar el proyecto
 1. Correr server con el comando:
