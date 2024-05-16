@@ -1,6 +1,14 @@
-# back-ferremax
+# FERREMAS BACKEND
 
-## Instalación
+Back de proyecto Ferremas
+
+## Requisitos
+
+- MySQL
+- Django 4.1.7
+- Python 3.10.0
+
+## Pasos
 
 1. Crear entorno virtual `python -m venv env`
 2. Activar scripts `env/Scripts/activate`
@@ -8,4 +16,7 @@
 4. Crear archivo `my.cnf`
 5. Crear migraciones `python manage.py makemigrations`
 6. Correr migracions `python manage.py migration`
-7. Correr server con el comando `python manage.py runserver`
+
+## Para ejecutar el proyecto
+1. Correr server con el comando:
+   `python manage.py runserver`
