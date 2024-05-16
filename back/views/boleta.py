@@ -51,5 +51,8 @@ class BoletaViewSet(ModelViewSet):
         boleta = Boleta.objects.get(buy_order=resultado['buy_order'])
         boleta.pagado = True if resultado['status'] == 'AUTHORIZED' else False
         boleta.save()
-
-        return redirect('http://localhost:4200/pago_confirmado/')
+        
+        if boleta.pagado:
+            return redirect('http://localhost:4200/pago_confirmado/')
+        
+        return redirect('http://localhost:4200/pago_rechazado/')
