@@ -61,7 +61,8 @@ class Boleta(models.Model):
     valor_total = models.FloatField()
     usuario = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     direccion_entrega = models.CharField(max_length=200)
-    tienda_entrega = models.ForeignKey(Tienda, on_delete=models.CASCADE)
+    tienda_entrega = models.ForeignKey(Tienda, on_delete=models.CASCADE, null=True, default=None)
+    es_carrito = models.BooleanField(default=True)
     pagado = models.BooleanField(default=False)
 
     def __str__(self):
@@ -78,11 +79,10 @@ class Contacto(models.Model):
     
 
 class Pedido(models.Model):
-    boleta = models.ForeignKey(Boleta, on_delete=models.CASCADE, null=True, default=None)
+    boleta = models.ForeignKey(Boleta, on_delete=models.CASCADE, null=True, default=None, related_name='pedidos')
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
     cantidad = models.PositiveIntegerField()
     valor_total = models.FloatField()
-    en_carrito = models.BooleanField(default=True)
 
     def __str__(self):
         return self.boleta
