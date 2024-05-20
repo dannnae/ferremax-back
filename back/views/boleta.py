@@ -5,17 +5,48 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import Serializer, ModelSerializer, CharField, IntegerField
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
+from rest_framework.exceptions import ValidationError
 from django.shortcuts import redirect
 
-from back.models import Boleta
+from back.models import Boleta, Pedido, Producto
+
+class AgregarProductoSerializer(Serializer):
+    producto_id = IntegerField(min_value=1)
+    cantidad = IntegerField(min_value=1)
+
+    def validate_producto_id(self, producto_id):
+        producto = Producto.objects.filter(pk=producto_id)
+        if not producto:
+            raise ValidationError('Producto no existe')
+        
+        return producto_id
+
+
+class ProductoCarritoSerializer(ModelSerializer):
+    nombre_producto = CharField(read_only=True, source='producto.nombre')
+    valor_unitario = CharField(read_only=True, source='producto.valor')
+    
+    class Meta:
+        model = Pedido
+        fields = ['id', 'producto', 'nombre_producto', 'valor_unitario', 'cantidad', 'valor_total']
+
 
 class BoletaSerializer(ModelSerializer):
     class Meta:
         model = Boleta
         fields = '__all__'
+
+
+class CarritoSerializer(ModelSerializer):
+    pedidos = ProductoCarritoSerializer(many=True)
+
+    class Meta:
+        model = Boleta
+        fields = ['id', 'valor_total', 'pedidos']
 
 
 class BoletaViewSet(ModelViewSet):
@@ -25,22 +56,62 @@ class BoletaViewSet(ModelViewSet):
     def generate_buy_order(self):
         return str(uuid.uuid4().int)[:10]
     
-    @swagger_auto_schema(
-        operation_description="Crea una nueva Boleta e inicia una transacción",
-        responses={200: "Respuesta HTML con el formulario WebPay", 404: "Transacción fallida"}
-    )
     def create(self, request, *args, **kwargs):
-        response = super().create(request, *args, **kwargs)
+        return Response(status=404)
+    
+    @action(detail=False, methods=['GET'])
+    def get_carrito(self, request):
+        usuario = self.request.user
+
+        carrito_query = Boleta.objects.filter(usuario=usuario, es_carrito=True)
+        if not carrito_query:
+            carrito = Boleta.objects.create(
+                valor_total=0,
+                usuario=usuario,
+                direccion_entrega='',
+            )
+        else:
+            carrito = carrito_query.first()
+
+        serializer = CarritoSerializer(carrito)
+        return Response(serializer.data, status=HTTP_200_OK)
+    
+    @action(detail=True, methods=['POST'])
+    def agregar_producto(self, request, pk):
+        carrito = self.get_object() 
+
+        serializer = AgregarProductoSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        Pedido.objects.update_or_create(
+            defaults={
+                'cantidad': serializer.data['cantidad'],
+                'valor_total': Producto.objects.get(pk=serializer.data['producto_id']).valor * serializer.data['cantidad']
+            },
+            boleta_id=pk,
+            producto_id=serializer.data['producto_id'],
+        )
+
+        valor_total = 0
+        for pedido in carrito.pedidos.all():
+            valor_total += pedido.valor_total
+
+        carrito.valor_total = valor_total
+        carrito.save()
+        serializer = CarritoSerializer(carrito)
+        return Response(serializer.data, status=HTTP_200_OK)
+            
+    @action(detail=True, methods=['GET'])
+    def pagar(self, request, pk):
+        boleta: Boleta = self.get_object()
         
         buy_order = self.generate_buy_order()
-        boleta = Boleta.objects.get(id=response.data['id'])
         boleta.buy_order = buy_order
         boleta.save()
 
         transaccion = (Transaction()).create(
-            buy_order=buy_order, 
-            session_id=self.generate_buy_order(), 
-            amount=response.data['valor_total'], 
+            buy_order=boleta.buy_order, 
+            session_id=boleta.buy_order, 
+            amount=boleta.valor_total, 
             return_url='http://localhost:8000/api/boleta/commit/'
         )
         response = requests.post(transaccion['url'], { 'token_ws': transaccion['token'] })
