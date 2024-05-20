@@ -59,6 +59,12 @@ class BoletaViewSet(ModelViewSet):
     def create(self, request, *args, **kwargs):
         return Response(status=404)
     
+    def update(self, request, *args, **kwargs):
+        return Response(status=404)
+    
+    def partial_update(self, request, *args, **kwargs):
+        return Response(status=404)
+    
     @action(detail=False, methods=['GET'])
     def get_carrito(self, request):
         usuario = self.request.user
@@ -134,6 +140,7 @@ class BoletaViewSet(ModelViewSet):
         resultado = (Transaction()).commit(token=token)
         boleta = Boleta.objects.get(buy_order=resultado['buy_order'])
         boleta.pagado = True if resultado['status'] == 'AUTHORIZED' else False
+        boleta.es_carrito = False
         boleta.save()
         
         if boleta.pagado:
