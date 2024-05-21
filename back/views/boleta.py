@@ -8,11 +8,23 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.serializers import Serializer, ModelSerializer, CharField, IntegerField
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
+from rest_framework.status import HTTP_200_OK, HTTP_204_NO_CONTENT
 from rest_framework.exceptions import ValidationError
 from django.shortcuts import redirect
 
 from back.models import Boleta, Pedido, Producto
+
+
+class EliminarPedidoSerializer(Serializer):
+    pedido_id = IntegerField(min_value=1)
+
+    def validate_pedido_id(self, pedido_id):
+        pedido = Pedido.objects.filter(pk=pedido_id)
+        if not pedido:
+            raise ValidationError('Pedido no existe')
+        
+        return pedido_id
+
 
 class AgregarProductoSerializer(Serializer):
     producto_id = IntegerField(min_value=1)
@@ -83,7 +95,7 @@ class BoletaViewSet(ModelViewSet):
         return Response(serializer.data, status=HTTP_200_OK)
     
     @action(detail=True, methods=['POST'])
-    def agregar_producto(self, request, pk):
+    def agregar_editar_producto(self, request, pk):
         carrito = self.get_object() 
 
         serializer = AgregarProductoSerializer(data=request.data)
@@ -105,6 +117,16 @@ class BoletaViewSet(ModelViewSet):
         carrito.save()
         serializer = CarritoSerializer(carrito)
         return Response(serializer.data, status=HTTP_200_OK)
+    
+    @action(detail=False, methods=['PUT'])
+    def eliminar_pedido(self, request):
+        serializer = EliminarPedidoSerializer(data=request.data) 
+        serializer.is_valid(raise_exception=True)
+        
+        Pedido.objects.filter(id=serializer.validated_data['pedido_id']).delete()
+
+        return Response(status=HTTP_204_NO_CONTENT)
+
             
     @action(detail=True, methods=['GET'])
     def pagar(self, request, pk):
