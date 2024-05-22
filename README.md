@@ -17,6 +17,7 @@ Back de proyecto Ferremas
 5. Crear archivo `.env`
 6. Crear migraciones `python manage.py makemigrations`
 7. Correr migracions `python manage.py migration`
+8. Crear productos ejemplos `python manage.py crear_productos`
 
 ## Para ejecutar el proyecto
 1. Correr server con el comando:
