@@ -21,7 +21,7 @@ class ProductoViewSet(ModelViewSet):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        categoria_id = self.request.query_params.get('categoria_id', None)
-        if categoria_id is not None:
-            queryset = queryset.filter(categoria_id=categoria_id)
+        categoria = self.request.query_params.get('categoria', None)
+        if categoria is not None:
+            queryset = queryset.filter(categoria__nombre=categoria)
         return queryset
