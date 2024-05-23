@@ -66,6 +66,7 @@ class Command(BaseCommand):
                 'categoria_id': categoria_objetos[0].id,
                 'tienda_id': tienda_objetos[0].id,
                 'valor': '13480',
+                'imagen': './martillo.avif'
             },
             {
                 'codigo': '9SE9-BJRA',
@@ -74,7 +75,8 @@ class Command(BaseCommand):
                 'stock': '7',
                 'categoria_id': categoria_objetos[0].id,
                 'tienda_id': tienda_objetos[0].id,
-                'valor': '10990'
+                'valor': '10990',
+                'imagen': './destornillador.avif'
             },
             {
                 'codigo': 'O680-8MDQ',
@@ -83,7 +85,8 @@ class Command(BaseCommand):
                 'stock': '5',
                 'categoria_id': categoria_objetos[0].id,
                 'tienda_id': tienda_objetos[1].id,
-                'valor': '10500'
+                'valor': '10500',
+                'imagen': './llave.webp'
             },
             {
                 'codigo': '9BZN-5GR5',
@@ -92,7 +95,8 @@ class Command(BaseCommand):
                 'stock': '9',
                 'categoria_id': categoria_objetos[0].id,
                 'tienda_id': tienda_objetos[0].id,
-                'valor': '42990'
+                'valor': '42990',
+                'imagen': './taladro.avif'
             },
             {
                 'codigo': 'DKC6-MRMT',
@@ -101,7 +105,8 @@ class Command(BaseCommand):
                 'stock': '4',
                 'categoria_id': categoria_objetos[0].id,
                 'tienda_id': tienda_objetos[1].id,
-                'valor': '39990'
+                'valor': '39990',
+                'imagen': './sierra.avif'
             }
         ]
         producto_objetos = [Producto(**datos) for datos in productos_datos]
