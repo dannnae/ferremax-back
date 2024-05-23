@@ -5,12 +5,13 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.serializers import Serializer, ModelSerializer, CharField, IntegerField
+from rest_framework.serializers import Serializer, ModelSerializer, CharField, IntegerField, SerializerMethodField
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK, HTTP_204_NO_CONTENT
 from rest_framework.exceptions import ValidationError
 from django.shortcuts import redirect
+from django.conf import settings
 
 from back.models import Boleta, Pedido, Producto
 
@@ -41,10 +42,17 @@ class AgregarProductoSerializer(Serializer):
 class ProductoCarritoSerializer(ModelSerializer):
     nombre_producto = CharField(read_only=True, source='producto.nombre')
     valor_unitario = CharField(read_only=True, source='producto.valor')
+    imagen_producto = SerializerMethodField()
     
     class Meta:
         model = Pedido
-        fields = ['id', 'producto', 'nombre_producto', 'valor_unitario', 'cantidad', 'valor_total']
+        fields = ['id', 'producto', 'nombre_producto', 'valor_unitario', 'cantidad', 'valor_total', 'imagen_producto']
+
+    def get_imagen_producto(self, obj: Pedido):
+        if obj.producto.imagen:
+            return f'http://localhost:8000{obj.producto.imagen.url}'
+        
+        return None
 
 
 class BoletaSerializer(ModelSerializer):
