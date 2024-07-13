@@ -4,6 +4,7 @@ from .boleta import BoletaViewSet
 from .categoria import CategoriaViewSet
 from .pedido import PedidoViewSet
 from .usuario import UserViewSet
+from .factura import FacturaViewSet
 
 
 __all__ = [
@@ -12,5 +13,6 @@ __all__ = [
     'BoletaViewSet',
     'CategoriaViewSet',
     'PedidoViewSet',
-    'UserViewSet'
+    'UserViewSet',
+    'FacturaViewSet'
 ]
