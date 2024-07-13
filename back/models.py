@@ -86,3 +86,19 @@ class Pedido(models.Model):
 
     def __str__(self):
         return self.boleta
+    
+class Factura(models.Model):
+    boleta = models.ForeignKey(Boleta, on_delete=models.CASCADE, null=True, default=None, related_name='factura')
+    nombre = models.CharField(max_length=100)
+    apellidos = models.CharField(max_length=100)
+    email = models.EmailField()
+    rut = models.CharField(max_length=20)
+    telefono = models.CharField(max_length=20)
+    comuna = models.CharField(max_length=100)
+    region = models.CharField(max_length=50)
+    direccion = models.CharField(max_length=200)
+    direccion2 = models.CharField(max_length=200)
+    envio = models.IntegerField(null=True)
+
+    def __str__(self):
+        return self.nombre
