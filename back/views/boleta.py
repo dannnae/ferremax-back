@@ -9,6 +9,7 @@ from rest_framework.serializers import Serializer, ModelSerializer, CharField, I
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK, HTTP_204_NO_CONTENT
+from rest_framework.permissions import AllowAny
 from rest_framework.exceptions import ValidationError
 from django.shortcuts import redirect
 from django.conf import settings
@@ -164,7 +165,7 @@ class BoletaViewSet(ModelViewSet):
         ],
         responses={302: "Redirigir a la página de confirmación o rechazo de pago"}
     )
-    @action(detail=False, methods=['GET'])
+    @action(detail=False, methods=['GET'], permission_classes=[AllowAny], authentication_classes=[])
     def commit(self, request):
         token = request.query_params.get('token_ws')
         resultado = (Transaction()).commit(token=token)

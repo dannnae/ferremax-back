@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from datetime import datetime   
 
 class CustomUser(AbstractUser):
     class Types(models.TextChoices):
@@ -85,7 +86,7 @@ class Pedido(models.Model):
     valor_total = models.FloatField()
 
     def __str__(self):
-        return self.boleta
+        return str(self.id)
     
 class Factura(models.Model):
     boleta = models.ForeignKey(Boleta, on_delete=models.CASCADE, null=True, default=None, related_name='factura')
@@ -99,6 +100,7 @@ class Factura(models.Model):
     direccion = models.CharField(max_length=200)
     direccion2 = models.CharField(max_length=200)
     envio = models.IntegerField(null=True)
+    fecha = models.DateField(auto_now=True, blank=True)
 
     def __str__(self):
         return self.nombre
