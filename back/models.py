@@ -98,7 +98,7 @@ class Factura(models.Model):
     comuna = models.CharField(max_length=100)
     region = models.CharField(max_length=50)
     direccion = models.CharField(max_length=200)
-    direccion2 = models.CharField(max_length=200)
+    direccion2 = models.CharField(max_length=200, null=True, blank=True)
     envio = models.IntegerField(null=True)
     fecha = models.DateField(auto_now=True, blank=True)
 
