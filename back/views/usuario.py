@@ -1,6 +1,7 @@
 from django.contrib.auth.hashers import make_password
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.serializers import ModelSerializer, CharField
+from rest_framework.permissions import AllowAny
 from back.models import CustomUser
 from drf_yasg.utils import swagger_auto_schema
 
@@ -21,6 +22,8 @@ class UserSerializer(ModelSerializer):
 class UserViewSet(ModelViewSet):
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
+    permission_classes = [AllowAny]
+    authentication_classes = []
 
 
     @swagger_auto_schema(
